@@ -59,32 +59,61 @@ function startAnimations() {
 
 // --- Section Navigation Control ---
 let isScrolling = false;
+let touchStartY = 0;
 
 // Prevent manual scrolling between sections, but allow it INSIDE a screen if content overflows
 function preventDefault(e) {
+    // If navigation is active, block everything
+    if (isScrolling) {
+        if (e.cancelable) e.preventDefault();
+        return;
+    }
+
     const scrollableScreen = e.target.closest('.screen');
     if (scrollableScreen) {
         const isSelfScrollable = scrollableScreen.scrollHeight > scrollableScreen.clientHeight;
         if (isSelfScrollable) {
-            const delta = e.deltaY || -e.wheelDelta || e.detail;
+            let delta = 0;
+            if (e.type === 'touchmove') {
+                const touchY = e.touches[0].clientY;
+                delta = touchStartY - touchY; // Positive = scrolling down
+                // Do NOT update touchStartY here, it stays fixed until touchstart
+            } else {
+                delta = e.deltaY;
+            }
+
             const scrollTop = scrollableScreen.scrollTop;
             const scrollHeight = scrollableScreen.scrollHeight;
             const clientHeight = scrollableScreen.clientHeight;
             
-            // Allow scroll inside unless at boundaries
-            if (delta > 0 && scrollTop + clientHeight < scrollHeight - 5) return;
-            if (delta < 0 && scrollTop > 5) return;
+            // Threshold for boundary (5px for reliability on mobile)
+            const margin = 5;
+
+            // Allow internal scrolling if:
+            // 1. Scrolling down and not yet at bottom
+            if (delta > 0 && scrollTop + clientHeight < scrollHeight - margin) return;
+            // 2. Scrolling up and not yet at top
+            if (delta < 0 && scrollTop > margin) return;
+            // 3. Almost at 0 delta (tiny moves)
+            if (Math.abs(delta) < 1) return;
         }
     }
+    
+    // If we reach here, either the screen isn't scrollable or we hit a boundary
     if (e.cancelable) e.preventDefault();
 }
 
-// Global AOS control
+function handleTouchStart(e) {
+    touchStartY = e.touches[0].clientY;
+}
+
+// AOS and Scroll Hook
 document.querySelectorAll('.screen').forEach(screen => {
     screen.addEventListener('scroll', () => {
-        AOS.refresh(); // Crucial for showing content inside the scrollable div
+        AOS.refresh(); 
     }, { passive: true });
 });
+
 function preventDefaultForScrollKeys(e) {
     const keys = { 32: 1, 33: 1, 34: 1, 35: 1, 36: 1, 37: 1, 38: 1, 39: 1, 40: 1 };
     if (keys[e.keyCode]) { preventDefault(e); return false; }
@@ -93,6 +122,7 @@ function preventDefaultForScrollKeys(e) {
 function disableScroll() {
     window.addEventListener('DOMMouseScroll', preventDefault, false);
     window.addEventListener('wheel', preventDefault, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', preventDefault, { passive: false });
     window.onkeydown = preventDefaultForScrollKeys;
 }
@@ -100,19 +130,10 @@ function disableScroll() {
 function enableScroll() {
     window.removeEventListener('DOMMouseScroll', preventDefault, false);
     window.removeEventListener('wheel', preventDefault, { passive: false });
-    window.removeEventListener('touchmove', preventDefault, { passive: false });
+    window.removeEventListener('touchstart', handleTouchStart);
+    window.removeEventListener('touchmove', preventDefault);
     window.onkeydown = null;
 }
-
-// Initial Lock
-disableScroll();
-
-// Re-enable AOS monitoring for internal scrolling
-document.querySelectorAll('.screen').forEach(screen => {
-    screen.addEventListener('scroll', () => {
-        AOS.refresh();
-    });
-});
 
 function navigateTo(id) {
     if (isScrolling) return;
@@ -381,3 +402,6 @@ btnYes.addEventListener('click', function() {
 
     runAsync().start();
 })();
+
+// Active the scroll lock on page load
+disableScroll();
