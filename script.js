@@ -86,16 +86,17 @@ function preventDefault(e) {
             const scrollHeight = scrollableScreen.scrollHeight;
             const clientHeight = scrollableScreen.clientHeight;
             
-            // Threshold for boundary (5px for reliability on mobile)
-            const margin = 5;
+            // Boundary checks: allow scrolling unless at the very edge (with 2px tolerance for subpixels)
+            const atBottom = scrollTop + clientHeight >= scrollHeight - 2;
+            const atTop = scrollTop <= 2;
 
-            // Allow internal scrolling if:
-            // 1. Scrolling down and not yet at bottom
-            if (delta > 0 && scrollTop + clientHeight < scrollHeight - margin) return;
-            // 2. Scrolling up and not yet at top
-            if (delta < 0 && scrollTop > margin) return;
-            // 3. Almost at 0 delta (tiny moves)
-            if (Math.abs(delta) < 1) return;
+            // If scrolling down and not yet at bottom, allow it
+            if (delta > 0 && !atBottom) return;
+            // If scrolling up and not yet at top, allow it
+            if (delta < 0 && !atTop) return;
+            
+            // Special case: allow small movements to avoid "stiff" feeling
+            if (Math.abs(delta) < 0.5) return;
         }
     }
     

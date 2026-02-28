@@ -127,37 +127,26 @@ body::-webkit-scrollbar {
 .screen>.glass-container,
 .screen>.content-box {
     margin: 0;
-    padding: 4rem 1.5rem;
+    padding: 4rem 1.5rem 8rem;
+    /* 增加底部间距至 8rem，确保按钮不被手机状态栏遮挡 */
     width: 100%;
     min-height: min-content;
     display: flex;
     flex-direction: column;
     align-items: center;
-    z-index: 1;
-    /* 保证在 before/after 伪元素之上 */
+    z-index: 10;
 }
 
 .tree-screen {
-    padding: 0;
     overflow: hidden;
 }
 
 .tree-screen>#tree-wrap {
     margin: auto !important;
-    padding: 0 !important;
 }
 
 .screen::-webkit-scrollbar {
     display: none;
-}
-
-.screen>.container,
-.screen>.glass-container,
-.screen>#tree-wrap,
-.screen>.content-box {
-    margin: auto;
-    padding: 5rem 2rem;
-    width: 100%;
 }
 
 .screen::-webkit-scrollbar {
