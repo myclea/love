@@ -59,62 +59,32 @@ function startAnimations() {
 
 // --- Section Navigation Control ---
 let isScrolling = false;
-let touchStartY = 0;
 
 // Prevent manual scrolling between sections, but allow it INSIDE a screen if content overflows
 function preventDefault(e) {
-    // If navigation is active, block everything
-    if (isScrolling) {
-        if (e.cancelable) e.preventDefault();
-        return;
-    }
-
     const scrollableScreen = e.target.closest('.screen');
     if (scrollableScreen) {
         const isSelfScrollable = scrollableScreen.scrollHeight > scrollableScreen.clientHeight;
         if (isSelfScrollable) {
-            let delta = 0;
-            if (e.type === 'touchmove') {
-                const touchY = e.touches[0].clientY;
-                delta = touchStartY - touchY; // Positive = scrolling down
-                // Do NOT update touchStartY here, it stays fixed until touchstart
-            } else {
-                delta = e.deltaY;
-            }
-
+            const delta = e.deltaY || -e.wheelDelta || e.detail;
             const scrollTop = scrollableScreen.scrollTop;
             const scrollHeight = scrollableScreen.scrollHeight;
             const clientHeight = scrollableScreen.clientHeight;
             
-            // Boundary checks: allow scrolling unless at the very edge (with 2px tolerance for subpixels)
-            const atBottom = scrollTop + clientHeight >= scrollHeight - 2;
-            const atTop = scrollTop <= 2;
-
-            // If scrolling down and not yet at bottom, allow it
-            if (delta > 0 && !atBottom) return;
-            // If scrolling up and not yet at top, allow it
-            if (delta < 0 && !atTop) return;
-            
-            // Special case: allow small movements to avoid "stiff" feeling
-            if (Math.abs(delta) < 0.5) return;
+            // Allow scroll inside unless at boundaries
+            if (delta > 0 && scrollTop + clientHeight < scrollHeight - 5) return;
+            if (delta < 0 && scrollTop > 5) return;
         }
     }
-    
-    // If we reach here, either the screen isn't scrollable or we hit a boundary
     if (e.cancelable) e.preventDefault();
 }
 
-function handleTouchStart(e) {
-    touchStartY = e.touches[0].clientY;
-}
-
-// AOS and Scroll Hook
+// Global AOS control
 document.querySelectorAll('.screen').forEach(screen => {
     screen.addEventListener('scroll', () => {
-        AOS.refresh(); 
+        AOS.refresh(); // Crucial for showing content inside the scrollable div
     }, { passive: true });
 });
-
 function preventDefaultForScrollKeys(e) {
     const keys = { 32: 1, 33: 1, 34: 1, 35: 1, 36: 1, 37: 1, 38: 1, 39: 1, 40: 1 };
     if (keys[e.keyCode]) { preventDefault(e); return false; }
@@ -123,7 +93,6 @@ function preventDefaultForScrollKeys(e) {
 function disableScroll() {
     window.addEventListener('DOMMouseScroll', preventDefault, false);
     window.addEventListener('wheel', preventDefault, { passive: false });
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', preventDefault, { passive: false });
     window.onkeydown = preventDefaultForScrollKeys;
 }
@@ -131,10 +100,19 @@ function disableScroll() {
 function enableScroll() {
     window.removeEventListener('DOMMouseScroll', preventDefault, false);
     window.removeEventListener('wheel', preventDefault, { passive: false });
-    window.removeEventListener('touchstart', handleTouchStart);
-    window.removeEventListener('touchmove', preventDefault);
+    window.removeEventListener('touchmove', preventDefault, { passive: false });
     window.onkeydown = null;
 }
+
+// Initial Lock
+disableScroll();
+
+// Re-enable AOS monitoring for internal scrolling
+document.querySelectorAll('.screen').forEach(screen => {
+    screen.addEventListener('scroll', () => {
+        AOS.refresh();
+    });
+});
 
 function navigateTo(id) {
     if (isScrolling) return;
@@ -403,6 +381,3 @@ btnYes.addEventListener('click', function() {
 
     runAsync().start();
 })();
-
-// Active the scroll lock on page load
-disableScroll();
