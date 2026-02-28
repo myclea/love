@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汪凯华 ❤️ 刘雨 | 表白网页</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Love Tree Scripts -->
+    <script src="tree_assets/jquery.min.js"></script>
+    <script src="tree_assets/jscex.min.js"></script>
+    <script src="tree_assets/jscex-parser.js"></script>
+    <script src="tree_assets/jscex-jit.js"></script>
+    <script src="tree_assets/jscex-builderbase.min.js"></script>
+    <script src="tree_assets/jscex-async.min.js"></script>
+    <script src="tree_assets/jscex-async-powerpack.min.js"></script>
+    <script src="tree_assets/functions.js"></script>
+    <script src="tree_assets/love.js"></script>
+</head>
+
+<body>
+
+    <!-- Loading / Password Overlay -->
+    <div id="password-overlay" class="overlay">
+        <div class="glass-card" data-aos="zoom-in">
+            <h2>请输入我们的特别日期</h2>
+            <p>(例如：0607)</p>
+            <input type="password" id="password-input" placeholder="输入日期...">
+            <button onclick="checkPassword()">确认进入</button>
+            <p id="password-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
+        <source src="汪苏泷 - 万有引力.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <div id="main-content" style="display: none;">
+        <!-- Screen 1: Opening -->
+        <section class="screen first-screen" id="home">
+            <div class="content-box">
+                <h1 id="typewriter-text"></h1>
+                <p class="fade-in-delayed">我有些话想对你说...</p>
+                <div class="scroll-down" onclick="scrollToNext()">
+                    <div class="mouse"></div>
+                    <span>点击进入</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 2: Story -->
+        <section class="screen second-screen" id="story">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-up">我们的故事</h2>
+                <div class="timeline">
+                    <div class="timeline-item" data-aos="fade-right">
+                        <div class="timeline-content">
+                            <img src="img/3972239d2f73bf70da67d00d6f175c61.jpg" class="timeline-img">
+                            <h3>🦞 剥虾的小确幸</h3>
+                            <p>还记得我们一起去吃小龙虾吗？看你认真剥虾的样子，我觉得那是人间最美的烟火气。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" data-aos="fade-left">
+                        <div class="timeline-content">
+                            <img src="img/ad540935b3cf1e6ab93b37413d79d3e0.jpg" class="timeline-img">
+                            <h3>🐑 奇奇怪怪的可爱</h3>
+                            <p>和你在一起，总能开启那些奇奇怪怪的滤镜。戴上羊咩咩的帽子，我们就是这条街最靓的仔。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" data-aos="fade-right">
+                        <div class="timeline-content">
+                            <img src="img/1f22bf72e4e69045cd022c78439a1481.jpg" class="timeline-img">
+                            <h3>🥤 陪你的每一刻</h3>
+                            <p>不管是陪你喝一杯喜欢的水果茶，还是在路边静静等待，只要身边有你，平淡的日常也闪闪发光。</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="next-btn" onclick="scrollToQuiz()" data-aos="fade-up">还有些小测试...</button>
+            </div>
+        </section>
+
+        <!-- New Section: Quiz -->
+        <section class="screen quiz-screen" id="quiz">
+            <div class="glass-container" data-aos="fade-up">
+                <h2 class="section-title">默契小挑战</h2>
+                <div id="quiz-container">
+                    <p id="quiz-question">我们的第一次见面是在什么时候？</p>
+                    <div class="quiz-options">
+                        <button onclick="checkQuiz(this, 'A')">春天</button>
+                        <button onclick="checkQuiz(this, 'B')">夏天</button>
+                        <button onclick="checkQuiz(this, 'C')">秋天</button>
+                        <button onclick="checkQuiz(this, 'D')">冬天</button>
+                    </div>
+                </div>
+                <p id="quiz-feedback" style="margin-top: 1rem;"></p>
+                <button id="quiz-next" class="next-btn" style="display: none;"
+                    onclick="scrollToGallery()">通过！去看我们的瞬间</button>
+            </div>
+        </section>
+
+        <!-- New Section: Gallery -->
+        <section class="screen gallery-screen" id="gallery">
+            <div class="container">
+                <h2 class="section-title" data-aos="fade-up">定格的瞬间</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item" data-aos="zoom-in"><img src="img/3972239d2f73bf70da67d00d6f175c61.jpg"
+                            alt="吃龙虾"></div>
+                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100"><img
+                            src="img/ad540935b3cf1e6ab93b37413d79d3e0.jpg" alt="可爱自拍"></div>
+                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200"><img
+                            src="img/1f22bf72e4e69045cd022c78439a1481.jpg" alt="喝茶"></div>
+                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300"><img
+                            src="img/43f3a85a6a7a7776f398ae9eb9cc086c.jpg" alt="背影"></div>
+                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="400"><img
+                            src="img/2a08c6e9a6c4aa4873040517d5cf3341.jpg" alt="红脸蛋自拍"></div>
+                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="500"><img
+                            src="img/5b808ff28ade3f7658d9ffc560d16e4e.jpg" alt="发呆"></div>
+                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="600"><img
+                            src="img/de02095bc5e882230541defef356c7cc.jpg" alt="路边"></div>
+                    <div class="gallery-item" data-aos="zoom-in" data-aos-delay="700"><img
+                            src="img/f2ce08da597d188cb80e9b58d65e80e1.jpg" alt="阳台"></div>
+                </div>
+                <button class="next-btn" onclick="scrollToLetter()" data-aos="fade-up">最后的话</button>
+            </div>
+        </section>
+
+        <!-- New Section: Love Tree (Classic Full Layout) -->
+        <section class="screen tree-screen" id="letter">
+            <div id="tree-wrap">
+                <!-- Left side text -->
+                <div id="tree-text-left" class="tree-text-container">
+                    <div id="tree-code-left">
+                        <font color="#ff758c"><b><i>
+                                    <span class="say">刘雨，见字如面。</span><br><br>
+                                    <span class="say">有些话当面总觉得笨拙，便认真写在这里。</span><br><br>
+                                    <span
+                                        class="say">我们相识已六年多，中间却隔了三年空白。你问我为何忽然再来找你——不是突然，是一直都想。去年过年我就鼓起勇气找过你，可又怕打扰，迟迟不敢多言。</span><br><br>
+                                    <span class="say">如今再主动，只是突然清醒：如果我什么都不做，就真的没有以后了。</span><br><br>
+                                    <span
+                                        class="say">我也曾反复问自己，是怕孤单，还是真的爱你。直到前几天看一部电影才明白，比起爱与不爱，什么都不做，才会只剩遗憾。扪心自问分开三年，心里还有没有你，我不想只用嘴说，往后行动会告诉你答案。</span><br><br>
+                                    <span
+                                        class="say">想起从前，好像就发生在昨天。那时有笑有闹，也会拌嘴吵架，可一起走过的路、一起做过的事，至今都清清楚楚，从未模糊。</span><br><br>
+                                    <span class="say">我今天写下这些，不是让你立刻答应，只是想知道你的态度，无论是什么，我都尊重。</span>
+                                </i></b></font>
+                    </div>
+                </div>
+
+                <!-- Right side text -->
+                <div id="tree-text-right" class="tree-text-container">
+                    <div id="tree-code-right">
+                        <font color="#ff758c"><b><i>
+                                    <span class="say">我能给你的承诺很实在：</span><br>
+                                    <span class="say">以后的日子，我们一起规划。你想去大城市，我们就一起去努力，一起安家立业，我会拼命赚钱，给你安稳的生活。</span><br><br>
+                                    <span
+                                        class="say">我想要的，从来不是轰轰烈烈的网红式浪漫，也不是偶像剧里死去活来的爱情，只是一场普通、踏实、有烟火气的恋爱。</span><br><br>
+                                    <span
+                                        class="say">白天各自认真上班，晚上商量好一起吃什么，下班回家买菜做饭，饭桌上聊聊一天的琐事与心情；吃完一起收拾碗筷，饭后牵着小狗去公园散步。</span><br>
+                                    <span
+                                        class="say">周末睡到自然醒，去吃顿喜欢的大餐，逛逛街，偶尔来一场短途自驾。看到好看的小物件会买给你，日常里藏着小惊喜、小仪式感。</span><br><br>
+                                    <span class="say">我们都不完美，也不是天生一对。</span><br>
+                                    <span class="say">未来或许会有摩擦，会吵架，会看见彼此的缺点，但我愿意慢慢磨合、好好沟通、学着包容、一起改变。</span><br><br>
+                                    <span class="say">我只想和你，把日子过得安稳又温暖。</span><br>
+                                    <span class="say">想听听，你的想法。</span><br><br>
+                                    <span class="say" style="text-align: right; display: block;">—— 汪凯华</span>
+                                </i></b></font>
+                    </div>
+                </div>
+                <div id="clock-box" style="display:none;">
+                    <span>
+                        <font color="#ff758c">汪凯华 ❤️ 刘雨，我们相识已经是：</font>
+                    </span>
+                    <div id="clock"></div>
+                </div>
+                <canvas id="tree-canvas" width="1100" height="680"></canvas>
+                <button class="next-btn tree-next" onclick="scrollToFinal()" style="display: none;">点击确定</button>
+            </div>
+        </section>
+
+        <!-- Screen 3: Confession -->
+        <section class="screen final-screen" id="final">
+            <div class="glass-container" data-aos="zoom-in">
+                <h1>汪凯华 ❤️ 刘雨</h1>
+                <p class="love-message">
+                    在漫长的岁月中，我找到了最想守护的那个人。<br>
+                    余生漫漫，我想牵着你的手一起走下去。
+                </p>
+                <h2>你愿做我再给我一次机会吗？</h2>
+
+                <div class="btn-group">
+                    <button id="btn-yes" class="glow-btn yes">愿意</button>
+                    <button id="btn-no" class="glow-btn no">不愿意</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Overlay -->
+        <div id="success-overlay" class="overlay-success">
+            <div class="success-card glass-card" data-aos="zoom-in">
+                <div class="couple-photo-wrap">
+                    <img src="img/ad540935b3cf1e6ab93b37413d79d3e0.jpg" class="couple-photo">
+                    <div class="heart-float">❤️</div>
+                </div>
+                <h1 class="bounce-up">🎉 我们在一起啦 ❤️</h1>
+                <div class="names-shine">汪凯华 & 刘雨</div>
+                <div class="love-days-total">自 2019.06.07 开启幸福</div>
+                <p class="final-promise">往后余生，请多指教。每一分每一秒，我都会在你身边。</p>
+            </div>
+            <!-- Floating Background Hearts -->
+            <div class="bg-hearts"></div>
+        </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
